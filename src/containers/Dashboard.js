@@ -72,6 +72,12 @@ export default class {
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
+    this.lastBillOpen = null
+    this.listStatusState = {
+      isOpen1: false,
+      isOpen2: false,
+      isOpen3: false,
+    };
     $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
     $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
     $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
@@ -133,22 +139,38 @@ export default class {
   handleShowTickets(e, bills, index) {
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
-    if (this.counter % 2 === 0) {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
-      $(`#status-bills-container${this.index}`)
-        .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
+    if (this.listStatusState[`isOpen${index}`]) {
+      $(`#arrow-icon${this.index}`).css({ transform: "rotate(0deg)" });
+      $(`#status-bills-container${this.index}`).html(
+        cards(filteredBills(bills, getStatus(this.index)))
+      );
     } else {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
-      $(`#status-bills-container${this.index}`)
-        .html("")
-      this.counter ++
+      $(`#arrow-icon${this.index}`).css({ transform: "rotate(90deg)" });
+      $(`#status-bills-container${this.index}`).html(
+        cards(filteredBills(bills, getStatus(this.index))));
+      this.listStatusState[`isOpen${index}`] = true;
     }
-
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-    })
+      if (this.lastBillOpen != bill.id) {
+        $(`#open-bill${bill.id}`).click((e) => {
+          this.lastBillOpen = bill.id;
+          this.handleEditTicket(e, bill, bills);
+        });
+      }
+    });
 
+    if (
+      !this.listStatusState.isOpen1 &&
+      !this.listStatusState.isOpen2 &&
+      !this.listStatusState.isOpen3
+    ) {
+      $(".dashboard-right-container div").html(`
+        <div id='big-billed-icon'> ${BigBilledIcon} </div>
+      `);
+      $(".vertical-navbar").css({
+        height: "120vh",
+      });
+    }
     return bills
 
   }
