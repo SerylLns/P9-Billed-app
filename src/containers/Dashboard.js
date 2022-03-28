@@ -92,6 +92,7 @@ export default class {
   }
 
   handleEditTicket(e, bill, bills) {
+    if (this.id == bill.id) return
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
     if (this.counter % 2 === 0) {
@@ -151,12 +152,10 @@ export default class {
       this.listStatusState[`isOpen${index}`] = true;
     }
     bills.forEach(bill => {
-      if (this.lastBillOpen != bill.id) {
         $(`#open-bill${bill.id}`).click((e) => {
           this.lastBillOpen = bill.id;
           this.handleEditTicket(e, bill, bills);
         });
-      }
     });
 
     if (
