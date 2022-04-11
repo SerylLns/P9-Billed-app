@@ -92,7 +92,7 @@ export default class {
   }
 
   handleEditTicket(e, bill, bills) {
-    if (this.id == bill.id) return
+    if (this.id == bill.id) console.log('same bill')
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
     if (this.counter % 2 === 0) {
