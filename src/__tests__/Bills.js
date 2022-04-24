@@ -9,12 +9,36 @@ import { ROUTES, ROUTES_PATH } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import router from "../app/Router.js";
 import Bills from "../containers/Bills.js";
-import mockStore from "../__mocks__/store";
 import store from "../__mocks__/store";
 
-// jest.mock("../app/Store", () => mockStore);
-
 describe("Given I am connected as an employee", () => {
+  describe("When I am on Bills Page", () => {
+    test("Then call getBills method", async () => {
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+        })
+      );
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+      window.onNavigate(ROUTES_PATH.NewBill);
+      const bills1 = new Bills({
+        document,
+        onNavigate,
+        store,
+        localStorage: window.localStorage,
+      });
+      const bills1result = jest.fn((e) => bills1.getBills());
+      const bills2result = store.bills().list();
+      expect(await bills1result().length).toEqual(await bills2result.length);
+    });
+  });
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
       Object.defineProperty(window, "localStorage", {
@@ -140,7 +164,6 @@ describe("Given I am connected as Employee and I am on Bills page", () => {
         const dataBills = await store.bills().list();
 
         expect(getSpy).toHaveBeenCalledTimes(1);
-        console.log(dataBills);
         expect(dataBills.length).toBe(4);
       });
       test("fetches bills from an API and fails with 404 message error", async () => {
