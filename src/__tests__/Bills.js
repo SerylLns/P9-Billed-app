@@ -13,7 +13,7 @@ import store from "../__mocks__/store";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
-    test("Then call getBills method", async () => {
+    test("Bills is egal to bills on store", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
       });
